@@ -1,0 +1,42 @@
+body,html{
+    padding:0;
+    margin:0;
+    background-color:#F2F2F2;
+}
+a{
+    text-decoration: none;
+    color:black;
+}
+.rele-150{
+    font-size:150%
+}
+.rele-120{
+    font-size:118%
+}
+.gcolor{
+    color: #FF3300;
+}
+.bgcolor{
+    background-color: #FF3300;
+}
+.gwhite{
+    color:white;
+}
+.bgwhite{
+    background-color:white;
+}
+.toppadding{
+    padding:0.4em 0;
+}
+.gcD7{
+    color:#D7D7D7;
+}
+.gcC9{
+    color:#C9C9C9;
+}
+.text-l{
+    text-align: left;
+}
+.text-r{
+    text-align: right;
+}
