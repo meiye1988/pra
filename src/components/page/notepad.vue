@@ -1,8 +1,17 @@
 <template>
   <el-row>
-       <el-col :span="3" class="bgcolor gwhite toppadding" @click.native="goBack()"><i class="icon iconfont icon-zuojiantou rele-120"></i></el-col>
-      <el-col :span="18" class="bgcolor gwhite toppadding">记事本</el-col>
-      <el-col :span="3" class="bgcolor gwhite toppadding"><i class="icon iconfont icon-gengduo rele-120"></i></el-col>
+       <el-col :span="3" class="bgcolor gwhite toppadding header" @click.native="goBack()"><i class="icon iconfont icon-zuojiantou rele-120"></i></el-col>
+      <el-col :span="18" class="bgcolor gwhite toppadding header">记事本</el-col>
+      <el-col :span="3" class="bgcolor gwhite toppadding header"  @click.native="toolsEvent()"><i class="icon iconfont icon-gengduo rele-120"></i></el-col>
+      <!-- <el-col :span="12" class="tools" :class="ishowtools?'show-tools':''">
+          <div class="siderLeft">
+              <ul>
+                  <li><button class="bgcolor gwhite">编辑数据</button></li>
+                  <li><button class="bgcolor gwhite">清空数据</button></li>
+              </ul>
+          </div>
+      </el-col> -->
+      <siderleft :is-ehow="ishowtools"></siderleft>
       <el-col :span="24" class="titlebox">
           <el-row class="container">
               <el-col :span="24" >
@@ -48,12 +57,14 @@
 <script>
 
 import store from '@/vuex/index'
+import siderleft from '@/components/page/siderleft.vue'
 export default {
     name: 'Notepad',
   data(){
       return {
           activeNames: [],
           eventTitle:'',
+          ishowtools:false,
          
       }
       
@@ -74,6 +85,9 @@ export default {
 
   }
   },
+  components:{
+      "siderleft":siderleft
+  },
   methods: {
       handleChange(val) {
         console.log(val);
@@ -92,12 +106,21 @@ export default {
       },
       moveToCancel(id){
           this.$store.dispatch("eventCancel",id);
+      },
+      toolsEvent(){
+          this.ishowtools = !this.ishowtools
+          
       }
+
   },
   store
 }
 </script>
 <style>
+.header{
+    z-index: 100;
+    position: relative;
+}
 .container{
     width: 100%;
     padding: 0 10px;
@@ -159,4 +182,5 @@ export default {
 .buttin.finish{
     right:80px;
 }
+
 </style>
