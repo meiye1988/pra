@@ -1,4 +1,7 @@
 export default{
+    getEventList(states) {
+        return states.event;
+    },
     getDoNo(state){
         return state.event.filter(function (d) {
             if (d.type === 1) {

@@ -2,8 +2,8 @@
   <el-col :span="12" class="tools" :class="{'show-tools':isEhow}">
           <div class="siderLeft">
               <ul>
-                  <li><button class="bgcolor gwhite">编辑数据</button></li>
-                  <li><button class="bgcolor gwhite">清空数据</button></li>
+                  <li><button class="bgcolor gwhite" @click="showTable">编辑数据</button></li>
+                  <li><button class="bgcolor gwhite" @click="cleanData">清空数据</button></li>
               </ul>
           </div>
       </el-col>
@@ -20,7 +20,12 @@ export default {
   },
   props:['isEhow'],
   methods:{
-
+      showTable:function(){
+          this.$emit("showTable");
+      },
+      cleanData:function(){
+          this.$emit("clearData");
+      }
   }
 }
 </script>
@@ -40,7 +45,8 @@ export default {
     transform:translateX(0px)
 }
 .siderLeft{
-    padding:2em;
+    padding:2.5em;
+    
 }
 .siderLeft ul{
     padding-left:0;padding-right:0;
@@ -52,6 +58,7 @@ export default {
 .siderLeft button{
     border:0;
     padding:0.4em 0.6em;
+    font-size:1.25rem;
 
 }
 </style>

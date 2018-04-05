@@ -1,84 +1,45 @@
 <template>
   <el-row>
-       <el-col :span="3" class="bgcolor gwhite toppadding header" @click.native="goBack()"><i class="icon iconfont icon-zuojiantou rele-120"></i></el-col>
-      <el-col :span="18" class="bgcolor gwhite toppadding header">记事本</el-col>
-      <el-col :span="3" class="bgcolor gwhite toppadding header"  @click.native="toolsEvent()"><i class="icon iconfont icon-gengduo rele-120"></i></el-col>
-      <!-- <el-col :span="12" class="tools" :class="ishowtools?'show-tools':''">
-          <div class="siderLeft">
-              <ul>
-                  <li><button class="bgcolor gwhite">编辑数据</button></li>
-                  <li><button class="bgcolor gwhite">清空数据</button></li>
-              </ul>
-          </div>
-      </el-col> -->
-      <siderleft :is-ehow="ishowtools"></siderleft>
-      <el-col :span="24" class="titlebox">
-          <el-row class="container">
-              <el-col :span="24" >
-                 <div class="event-add"><input v-model="eventTitle" type="text" placeholder="待办事项" class="n-input"> <button class="add-btn bgcolor" @click="addEventSubmit()">提交</button></div>
-                
-                  
-              </el-col>
-             <el-col :span="24">
-                 <el-collapse v-model="activeNames" @change="handleChange">
-                   
-                    <el-collapse-item title="未完成" name="1">
-                        <div class="buttinbox text-l" v-for="vo in getNoDo">{{vo.title}}
-                            <button class="buttin finish" @click="moveToDone(vo.id)">完成</button>
-                            <button class="buttin" @click="moveToCancel(vo.id)">取消</button>
-
-                        </div>
-                        <!-- <div class="buttinbox text-l">123123123
-                            <button class="buttin finish">完成</button>
-                            <button class="buttin">取消</button>
-
-                        </div> -->
-                        <!-- <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div> -->
-                    </el-collapse-item>
-                    <el-collapse-item title="已完成" name="2">
-                        <div class="buttinbox text-l" v-for="vo in getDone">{{vo.title}}
-
-                        </div>
-                    </el-collapse-item>
-                    <el-collapse-item title="已取消" name="3">
-                         <div class="buttinbox text-l" v-for="vo in getCancel">{{vo.title}}
-
-                        </div>
-                    </el-collapse-item>
-                </el-collapse>
-             </el-col>
-          </el-row>
+       <!-- <el-col :span="3" class="bgcolor gwhite toppadding header" @click.native="goBack()"><i class="icon iconfont icon-zuojiantou rele-120"></i></el-col> -->
+      <el-col :span="24" class="bgcolor gwhite toppadding header">记事本
+          <i class="icon iconfont icon-gengduo rele-120 siderleftbtn" @click="toolsEvent()"></i>
 
       </el-col>
+      <siderleft :is-ehow="ishowtools" @showTable="ishowtools=false;isTable=true;islistnone=true" @clearData="clearData"></siderleft>
+      <eventlist :is-none="islistnone"></eventlist>
+      <eventtable @delevent="delData" :is-show="isTable"></eventtable>
+      <eventdialog :is-show="isshowD" @cancelDialog="isshowD=false" :msg="tips" @sure="sureDialog"></eventdialog>
+
+      
 
   </el-row>
 </template>
 
 <script>
-
 import store from '@/vuex/index'
 import siderleft from '@/components/page/siderleft.vue'
+import eventlist from '@/components/page/event-list.vue'
+import eventtable from '@/components/page/event-table.vue'
+import eventdialog from '@/components/common/dialog.vue'
 export default {
     name: 'Notepad',
   data(){
       return {
-          activeNames: [],
-          eventTitle:'',
           ishowtools:false,
+          isshowD:false,
+          isTable:false,
+          islistnone:false,
+          dialog_type:'',
+          tips:'',
+          del_info: {
+            index: 0,
+            id: 0
+        }
          
       }
       
   },
   computed:{
-      getNoDo(){
-          return this.$store.getters.getDoNo;
-      },
-      getDone(){
-            return this.$store.getters.getDone;
-        },
-        getCancel(){
-            return this.$store.getters.getCancel;
-        },
         goBack:function(){
           this.$router.isBack = true
           window.history.go(-1);
@@ -86,30 +47,52 @@ export default {
   }
   },
   components:{
-      "siderleft":siderleft
+      "siderleft":siderleft,
+      "eventlist":eventlist,
+      "eventtable":eventtable,
+      "eventdialog":eventdialog
+      
   },
   methods: {
-      handleChange(val) {
-        console.log(val);
-      },
-      addEventSubmit(){
-          
-          let title = this.eventTitle;
-          if(title!="" && title!=undefined){
-              title  = title.trim();
-              this.$store.dispatch('addEvent',title);
-              this.eventTitle = "";
-          }
-      },
-      moveToDone(id){
-          this.$store.dispatch("eventDone",id);
-      },
-      moveToCancel(id){
-          this.$store.dispatch("eventCancel",id);
-      },
       toolsEvent(){
-          this.ishowtools = !this.ishowtools
+          if(this.isTable==false){
+              this.ishowtools = !this.ishowtools
+          }else{
+              console.log("df");
+              this.isTable = false;
+               this.islistnone = false;
+          }
           
+          
+      },
+      delData(index,id){
+          this.dialog_type = "delData";
+          this.tips="确定要删除记录吗"
+          this.isshowD = true;
+           this.del_info = {
+                    index: index,
+                    id : id
+                }
+      },
+      clearData(){
+          this.dialog_type = "clearData";
+          this.tips="确定要清空所有数据吗"
+          this.isshowD = true;
+          this.ishowtools = false;
+      },
+      sureDialog(){
+          var self = this;
+          switch(self.dialog_type){
+              case 'delData':
+                self.$store.dispatch("eventDel",self.del_info);
+                self.$message('删除成功');
+              break;
+               case 'clearData':
+                self.$store.dispatch("eventClear");
+                self.$message('清空成功');
+              break;
+          }
+          this.isshowD = false;
       }
 
   },
@@ -120,67 +103,19 @@ export default {
 .header{
     z-index: 100;
     position: relative;
+    height:3rem;
+    line-height: 2rem;
+    font-size:1.25rem;
+    
+}
+.siderleftbtn{
+    position: absolute;
+    right:20px;
 }
 .container{
     width: 100%;
     padding: 0 10px;
 }
-.event-add {
-    position: relative;
-    padding: 30px 90px 30px 0;
-    font-size: 16px;
-}
-.event-add .n-input {
-    width: 100%;
-    height: 40px;
-    padding: 7px 10px;
-    line-height: 26px;
-    border: 1px solid #c0ccda;
-    border-radius: 4px;
-    transition: border-color .2s cubic-bezier(.645,.045,.355,1);
-    box-sizing: border-box;
-    font-size: inherit;
-}
 
-
-.event-add .add-btn {
-    position: absolute;
-    right: 0;
-    top: 30px;
-    width: 80px;
-    height: 40px;
-    line-height: 26px;
-    color: #fff;
-    border:0;
-    cursor: pointer;
-    
-}
-.el-collapse-item .el-collapse-item__header{
-    background-color:#FF3300;
-    color:white;
-
-}
-.el-collapse-item__content{
-    padding-bottom: 0;
-}
-.buttinbox{
-    width:100%;
-    position: relative;
-    height:44px;
-    line-height: 44px;
-}
-.buttin{
-    position: absolute;
-    right:10px;
-    background-color:white;
-    color:#FF3300;;
-    border:1px solid #FF3300;
-    padding:5px 10px;
-    top:10px;
-
-}
-.buttin.finish{
-    right:80px;
-}
 
 </style>

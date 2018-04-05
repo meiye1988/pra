@@ -35,5 +35,33 @@ export default{
         }
         states.event.unshift(item);
         func.setItems(states);
+    },
+    eventDel(states,info){
+        if(states.event[info.index].id == info.id){
+            states.event.splice(info.index,1);
+        }else{
+            states.event.filter(function(d,i){
+                if (d.id == info.id) {
+                    states.event.splice(i, 1);
+                }
+            });
+        }
+        func.setItems(states);
+    },
+    eventClear(states){
+        states.event = [];
+        func.setItems(states);
+    },
+    eventEdit(states,info){
+        if (states.event[info.index].id === info.id) {
+            states.event[info.index].title = info.title;
+        } else {
+            states.event.filter(function (d) {
+                if (d.id == info.id) {
+                    d.title = info.title;
+                }
+            })
+        }
+        func.setItems(states);
     }
 }
