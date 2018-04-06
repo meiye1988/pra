@@ -1,5 +1,7 @@
 <template>
+
   <el-row>
+      <!-- <div v-show="show" :class="bottom" class="vue-toast toast-center">成功</div> -->
        <!-- <el-col :span="3" class="bgcolor gwhite toppadding header" @click.native="goBack()"><i class="icon iconfont icon-zuojiantou rele-120"></i></el-col> -->
       <el-col :span="24" class="bgcolor gwhite toppadding header">记事本
           <i class="icon iconfont icon-gengduo rele-120 siderleftbtn" @click="toolsEvent()"></i>
@@ -25,6 +27,7 @@ export default {
     name: 'Notepad',
   data(){
       return {
+        //   show:true,
           ishowtools:false,
           isshowD:false,
           isTable:false,
@@ -38,6 +41,8 @@ export default {
          
       }
       
+  },
+  mounted(){
   },
   computed:{
         goBack:function(){
@@ -85,11 +90,11 @@ export default {
           switch(self.dialog_type){
               case 'delData':
                 self.$store.dispatch("eventDel",self.del_info);
-                self.$message('删除成功');
+                self.$toast('删除成功');
               break;
                case 'clearData':
                 self.$store.dispatch("eventClear");
-                self.$message('清空成功');
+                self.$toast('清空成功');
               break;
           }
           this.isshowD = false;
@@ -116,6 +121,5 @@ export default {
     width: 100%;
     padding: 0 10px;
 }
-
 
 </style>
